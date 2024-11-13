@@ -1,7 +1,7 @@
-using DataAccessLayer.Interfaces;
-using DataAccessLayer.Repositories;
+using Persistence.Repositories;
+using Domain.Repositories;
 
-namespace DataAccessLayer;
+namespace Persistence;
 
 public class UnitOfWork : IDisposable
 {

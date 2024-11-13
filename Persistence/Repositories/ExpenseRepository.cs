@@ -1,8 +1,8 @@
-using DataAccessLayer.Entities;
-using DataAccessLayer.Interfaces;
+using Domain.Entities;
+using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer.Repositories;
+namespace Persistence.Repositories;
 
 public class ExpenseRepository : IExpenseRepository
 {

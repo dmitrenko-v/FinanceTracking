@@ -1,4 +1,4 @@
-namespace DataAccessLayer.Interfaces;
+namespace Domain.Repositories;
 
 public interface IRepository<in TEntity>
 {

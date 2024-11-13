@@ -1,6 +1,6 @@
-using DataAccessLayer.Entities;
+using Domain.Entities;
 
-namespace DataAccessLayer.Interfaces;
+namespace Domain.Repositories;
 
 public interface ICategoryRepository : IRepository<Category>
 {
