@@ -14,8 +14,6 @@ public class User : IdentityUser
     
     public IEnumerable<Budget> Budgets { get; set; } = new List<Budget>();
     
-    public IEnumerable<Card> Cards { get; set; } = new List<Card>();
-    
     public IEnumerable<Income> Incomes { get; set; } = new List<Income>();
     
     public IEnumerable<Goal> Goals { get; set; } = new List<Goal>();

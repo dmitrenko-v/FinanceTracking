@@ -12,7 +12,22 @@ public class BudgetRepository : IBudgetRepository
     {
         this._budgets = context.Budgets;
     }
-    
+
+    public async Task<Budget?> FindByIdAsync(int id)
+    {
+        return await this._budgets.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Budget?> FindByUserIdAndCategoryName(string userId, string categoryName)
+    {
+        return await this._budgets.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.CategoryName == categoryName);
+    }
+
+    public async Task<IEnumerable<Budget>> FindUserBudgetsAsync(string userId)
+    {
+        return await this._budgets.Where(x => x.UserId == userId).ToListAsync();
+    }
+
     public void Add(Budget entity)
     {
         this._budgets.Add(entity);

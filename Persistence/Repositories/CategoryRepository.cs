@@ -12,7 +12,12 @@ public class CategoryRepository : ICategoryRepository
     {
         this._categories = context.Categories;    
     }
-    
+
+    public async Task<Category?> FindByNameAsync(string name)
+    {
+        return await this._categories.AsNoTracking().FirstOrDefaultAsync(x => x.Name == name);
+    }
+
     public void Add(Category entity)
     {
         this._categories.Add(entity);

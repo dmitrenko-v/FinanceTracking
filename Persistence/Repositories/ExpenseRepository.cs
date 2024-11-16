@@ -12,7 +12,17 @@ public class ExpenseRepository : IExpenseRepository
     {
         this._expenses = context.Expenses;
     }
-    
+
+    public async Task<Expense?> FindByIdAsync(int id)
+    {
+        return await this._expenses.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);;
+    }
+
+    public async Task<IEnumerable<Expense>> FindUserExpensesAsync(string userId)
+    {
+        return await this._expenses.Where(x => x.UserId == userId).ToListAsync();
+    }
+
     public void Add(Expense entity)
     {
         this._expenses.Add(entity);

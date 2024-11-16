@@ -1,6 +1,6 @@
 namespace Domain.Repositories;
 
-public interface IRepository<in TEntity>
+public interface IRepository<TEntity>
 {
     public void Add(TEntity entity);
     

@@ -10,8 +10,6 @@ public class Expense
     
     public string UserId { get; set; } = null!;
     
-    public string CardNumber { get; set; } = null!;
-    
     public string CategoryName { get; set; } = null!;
     
     public DateTime Date { get; set; }
@@ -19,6 +17,4 @@ public class Expense
     public decimal Amount { get; set; }
     
     public Category Category { get; set; } = null!;
-    
-    public Card Card { get; set; } = null!;
 }

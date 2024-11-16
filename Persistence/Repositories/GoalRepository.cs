@@ -12,7 +12,17 @@ public class GoalRepository : IGoalRepository
     {
         this._goals = context.Goals;
     }
-    
+
+    public async Task<Goal?> FindByIdAsync(int id)
+    {
+        return await this._goals.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<IEnumerable<Goal>> FindUserGoalsAsync(string userId)
+    {
+        return await this._goals.Where(x => x.UserId == userId).ToListAsync();
+    }
+
     public void Add(Goal entity)
     {
         this._goals.Add(entity);

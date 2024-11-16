@@ -12,7 +12,17 @@ public class IncomeRepository : IIncomeRepository
     {
         this._incomes = context.Incomes;
     }
-    
+
+    public async Task<Income?> FindByIdAsync(int id)
+    {
+        return await this._incomes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<IEnumerable<Income>> FindUserIncomesAsync(string userId)
+    {
+        return await this._incomes.Where(x => x.UserId == userId).ToListAsync();
+    }
+
     public void Add(Income entity)
     {
         this._incomes.Add(entity);

@@ -1,16 +1,12 @@
-namespace Domain.Entities;
+namespace Application.Dto.Budget;
 
-public class Budget
+public class BudgetDto
 {
     public int Id { get; set; }
-    
-    public string UserId { get; set; } = null!;
     
     public decimal CurrentAmount { get; set; }
     
     public decimal CeilingAmount { get; set; }
 
     public string CategoryName { get; set; } = null!;
-
-    public Category Category { get; set; } = null!;
 }
