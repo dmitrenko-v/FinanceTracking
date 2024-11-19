@@ -38,7 +38,7 @@ public class ExpenseService : IExpenseService
     {
         var expense = await this._unitOfWork.ExpenseRepository.FindByIdAsync(id);
 
-        // ValidateGoal(expense, userId);
+        ValidateExpense(expense, userId);
 
         var updatedExpense = this._mapper.Map<Expense>(updateExpenseDto);
         updatedExpense.Id = id;

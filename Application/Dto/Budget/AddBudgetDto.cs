@@ -9,7 +9,4 @@ public class AddBudgetDto
 
     [Required]
     public string CategoryName { get; set; } = null!;
-    
-    [Required]
-    public DateTime EndDate { get; set; }
 }

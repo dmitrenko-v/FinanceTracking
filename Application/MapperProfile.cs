@@ -22,8 +22,8 @@ public class MapperProfile : Profile
         CreateMap<UpdateIncomeDto, Income>();
         CreateMap<Income, IncomeDto>();
 
-        CreateMap<AddExpenseDto, ExpenseDto>();
-        CreateMap<UpdateExpenseDto, ExpenseDto>();
+        CreateMap<AddExpenseDto, Expense>();
+        CreateMap<UpdateExpenseDto, Expense>();
         CreateMap<Expense, ExpenseDto>();
     }
 }

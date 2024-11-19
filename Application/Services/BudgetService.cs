@@ -27,7 +27,7 @@ public class BudgetService : IBudgetService
             throw new BadRequestException("There is no such category");
         }
 
-        if (await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(budget.UserId, budget.CategoryName) is
+        if (await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, budget.CategoryName) is
             not null)
         {
             throw new BadRequestException("You already have budget in this category in this month");
