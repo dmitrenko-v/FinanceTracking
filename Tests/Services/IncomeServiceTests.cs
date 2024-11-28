@@ -257,7 +257,7 @@ public class IncomeServiceTests
             .ReturnsAsync(new List<Income> { existingIncomes[0] });
 
         var incomeService = new IncomeService(mockUnitOfWork.Object, mapper);
-        var result = (await incomeService.GetUserIncomesDto(userId)).ToList()[0];
+        var result = (await incomeService.GetUserIncomesAsync(userId)).ToList()[0];
 
         Assert.That(result.Id == expectedIncome.Id &&
                     result.Title == expectedIncome.Title &&

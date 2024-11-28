@@ -15,7 +15,7 @@ public class IncomeRepository : IIncomeRepository
 
     public async Task<Income?> FindByIdAsync(int id)
     {
-        return await this._incomes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return await this._incomes.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<IEnumerable<Income>> FindUserIncomesAsync(string userId)

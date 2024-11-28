@@ -4,7 +4,7 @@ namespace Application.Dto.Budget;
 public class AddBudgetDto
 {
     [Required]
-    [Range(1, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal CeilingAmount { get; set; }
 
     [Required]

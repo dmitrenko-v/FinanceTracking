@@ -1,0 +1,52 @@
+<div class="flex flex-col items-center mt-6">
+    <h1 class="mat-h1">Regsiter</h1>
+    <form [formGroup]="form" class='flex flex-col w-1/3 mt-10'>
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email">
+        </mat-form-field>
+        <div *ngIf="email.invalid && !email.untouched">
+            <mat-error *ngIf="email.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="email.hasError('email')">Wrong email format.</mat-error>
+        </div>
+
+        <mat-form-field>
+            <mat-label>First name</mat-label>
+            <input matInput formControlName="firstName">
+        </mat-form-field>
+        <div *ngIf="firstName.invalid && !firstName.untouched">
+            <mat-error *ngIf="firstName.hasError('required')">First name is required</mat-error>
+            <mat-error *ngIf="firstName.hasError('maxlength')">First name must be less than 50 characters long.
+            </mat-error>
+        </div>
+
+        <mat-form-field>
+            <mat-label>Last name</mat-label>
+            <input matInput formControlName="lastName">
+        </mat-form-field>
+        <div *ngIf="lastName.invalid && !lastName.untouched">
+            <mat-error *ngIf="lastName.hasError('required')">Last name is required</mat-error>
+            <mat-error *ngIf="lastName.hasError('maxlength')">Last name must be less than 50 characters long.
+            </mat-error>
+        </div>
+
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input type="password" matInput formControlName="password">
+        </mat-form-field>
+        <div *ngIf="password.invalid && !password.untouched">
+            <mat-error *ngIf="password.hasError('required')">Password is required</mat-error>
+        </div>
+        @for (err of errorsFromBackend; track errorsFromBackend.indexOf(err)) {
+            <mat-error>{{ err }}</mat-error>
+        }
+        <button class="mat-primary" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid" type="button">
+            Register
+        </button>
+    </form>
+    <app-google-button class="mt-10"/>
+</div>
+
+
+
+

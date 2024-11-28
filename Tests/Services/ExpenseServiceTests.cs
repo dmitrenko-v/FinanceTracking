@@ -99,6 +99,9 @@ public class ExpenseServiceTests
             .ReturnsAsync(existingExpense);
 
         mockUnitOfWork.Setup(x => x.ExpenseRepository.Update(It.IsAny<Expense>()));
+        mockUnitOfWork
+            .Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, updatedExpense.CategoryName))
+            .ReturnsAsync((Budget?)null);
 
         var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
         await expenseService.UpdateExpenseAsync(existingExpense.Id, updatedExpense, userId);
@@ -114,7 +117,7 @@ public class ExpenseServiceTests
                 x.Title == updatedExpense.Title)), Times.Once);
         mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
     }
-
+    
     [Test]
     public void UpdateExpenseAsyncThrowsForNullExpense()
     {

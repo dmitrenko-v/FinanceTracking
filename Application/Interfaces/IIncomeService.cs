@@ -10,5 +10,5 @@ public interface IIncomeService
     
     public Task DeleteIncomeAsync(int id, string userId);
     
-    public Task<IEnumerable<IncomeDto>> GetUserIncomesDto(string userId);
+    public Task<IEnumerable<IncomeDto>> GetUserIncomesAsync(string userId);
 }

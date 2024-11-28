@@ -1,7 +1,7 @@
+using Application.Identity;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Identity;
 
 namespace Persistence;
 
@@ -29,7 +29,7 @@ public class FinanceContext : IdentityDbContext<User>
         base.OnModelCreating(builder);
 
         builder.Entity<AccountType>().HasKey(x => x.Type);
-        builder.Entity<AccountType>().HasMany<User>().WithOne(x => x.AccountType).HasForeignKey("AccountTypeName");
+        builder.Entity<AccountType>().HasMany<User>().WithOne(x => x.AccountType).HasForeignKey(x => x.AccountTypeName);
 
         builder.Entity<Category>().HasKey(x => x.Name);
 
@@ -42,5 +42,7 @@ public class FinanceContext : IdentityDbContext<User>
         builder.Entity<Income>().HasOne<User>().WithMany(x => x.Incomes).HasForeignKey(x => x.UserId);
 
         builder.Entity<Goal>().HasOne<User>().WithMany(x => x.Goals).HasForeignKey(x => x.UserId);
+        
+        builder.Seed();
     }
 }

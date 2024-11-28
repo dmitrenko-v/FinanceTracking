@@ -2,13 +2,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Persistence.Identity;
+namespace Application.Identity;
 
 public class User : IdentityUser
 {
     public string FirstName { get; set; } = null!;
-    
+
     public string LastName { get; set; } = null!;
+
+    public string AccountTypeName { get; set; } = null!;
     
     public AccountType AccountType { get; set; } = null!;
     

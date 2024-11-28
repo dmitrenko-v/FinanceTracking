@@ -16,6 +16,6 @@ public class AddIncomeDto
     public DateTime Date { get; set; }
     
     [Required]
-    [Range(1, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal Amount { get; set; }
 }

@@ -1,0 +1,17 @@
+<mat-toolbar class="mat-primary flex p-5 text-white">
+    <div *ngIf="user" class="text-center flex flex-1 gap-5">
+        <p routerLink="/expenses">Expenses</p>
+        <p routerLink="/incomes">Incomes</p>
+        <p routerLink="/goals">Goals</p>
+        <p routerLink="/budgets">Budgets</p>
+    </div>
+    <div class="flex gap-5">
+        @if (user) {
+            <p>Get premium</p>
+            <p class="hover:underline hover:cursor-pointer" (click)="logOut()">Logout</p>
+        } @else {
+            <p routerLink="/login">Login</p>
+            <p routerLink="/register">Register</p>   
+        }
+    </div>
+</mat-toolbar>

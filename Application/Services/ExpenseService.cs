@@ -29,6 +29,15 @@ public class ExpenseService : IExpenseService
         }
 
         expense.UserId = userId;
+        
+        var userBudget = await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, expense.CategoryName);
+        if (userBudget is not null &&
+            DateTime.Now.Month == addExpenseDto.Date.Month &&
+            DateTime.Now.Year == addExpenseDto.Date.Year)
+        {
+            userBudget.CurrentAmount += expense.Amount;
+            this._unitOfWork.BudgetRepository.Update(userBudget);
+        }
 
         this._unitOfWork.ExpenseRepository.Add(expense);
         await this._unitOfWork.CommitAsync();
@@ -44,6 +53,23 @@ public class ExpenseService : IExpenseService
         updatedExpense.Id = id;
         updatedExpense.UserId = userId;
         updatedExpense.Date = expense!.Date;
+        
+        var userBudget = await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, expense.CategoryName);
+        if (userBudget is not null &&
+            DateTime.Now.Month == updateExpenseDto.Date.Month &&
+            DateTime.Now.Year == updateExpenseDto.Date.Year)
+        {
+            if (updateExpenseDto.CategoryName == expense.CategoryName)
+            {
+                var diff = updateExpenseDto.Amount - expense.Amount;
+                userBudget.CurrentAmount += diff;
+            }
+            else
+            {
+                userBudget.CurrentAmount += expense.Amount;
+            }
+            this._unitOfWork.BudgetRepository.Update(userBudget);
+        }
 
         this._unitOfWork.ExpenseRepository.Update(updatedExpense);
         await this._unitOfWork.CommitAsync();

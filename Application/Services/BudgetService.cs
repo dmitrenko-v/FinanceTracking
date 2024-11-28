@@ -42,6 +42,7 @@ public class BudgetService : IBudgetService
 
     public async Task UpdateBudgetAsync(int id, decimal ceilingAmount, string userId)
     {
+        Console.WriteLine(ceilingAmount);
         var budget = await this._unitOfWork.BudgetRepository.FindByIdAsync(id);
 
         ValidateBudget(budget, userId);

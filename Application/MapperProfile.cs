@@ -1,7 +1,9 @@
+using Application.Dto.Auth;
 using Application.Dto.Budget;
 using Application.Dto.Expense;
 using Application.Dto.Goal;
 using Application.Dto.Income;
+using Application.Identity;
 using AutoMapper;
 using Domain.Entities;
 
@@ -25,5 +27,7 @@ public class MapperProfile : Profile
         CreateMap<AddExpenseDto, Expense>();
         CreateMap<UpdateExpenseDto, Expense>();
         CreateMap<Expense, ExpenseDto>();
+
+        CreateMap<RegisterDto, User>();
     }
 }

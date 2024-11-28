@@ -1,0 +1,19 @@
+<div class="ml-2 mt-5">
+    <button mat-flat-button class="mat-primary" (click)="openAddDialog()">Add new goal</button>
+    <div class="flex flex-col w-1/3 gap-5">
+        @for (goal of goals; track goal.id) {
+            <mat-card class="p-5 flex gap-4">
+                <mat-card-title *ngIf="(goal.currentAmount / goal.goalAmount) * 100 >= 100">Goal achieved!</mat-card-title>
+                <mat-card-title>{{ goal.title }}</mat-card-title>
+                <mat-card-subtitle>Storage: {{ goal.storedIn }}</mat-card-subtitle>
+                <mat-card-content>{{ goal.description }}</mat-card-content>
+                <mat-card-content>{{goal.currentAmount}}/{{goal.goalAmount}} ₴</mat-card-content>
+                <mat-progress-bar value="{{(goal.currentAmount / goal.goalAmount) * 100}}"></mat-progress-bar>
+                <mat-card-footer class="flex justify-between">
+                    <img (click)="openEditDialog(goal)" alt="editIcon" src="edit.svg">
+                    <img (click)="onDeleteClick(goal.id)" alt="deleteIcon" src="cross.svg">
+                </mat-card-footer>
+            </mat-card>
+        }
+    </div>
+</div>

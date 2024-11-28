@@ -1,0 +1,27 @@
+<div class="overflow-y-hidden p-10">
+    <h2 class="mat-h2">{{isEditing ? "Edit Budget": "Add Budget"}}</h2>
+    <form class="flex flex-col gap-5 w-96" [formGroup]="form">
+        <mat-form-field *ngIf="!isEditing">
+            <mat-label>Category name</mat-label>
+            <mat-select formControlName="categoryName">
+                @for (category of categories; track category) {
+                    <mat-option value="{{category}}">{{category}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Ceiling amount</mat-label>
+            <input matInput type="number" formControlName="ceilingAmount">
+        </mat-form-field>
+        <div *ngIf="ceilingAmount.invalid && !ceilingAmount.untouched">
+            <mat-error *ngIf="ceilingAmount.hasError('required')">Ceiling amount is required and must be a valid number.</mat-error>
+            <mat-error *ngIf="ceilingAmount.hasError('min')">Ceiling amount must be positive number.</mat-error>
+        </div>
+        @for (err of errorsFromBackend; track errorsFromBackend.indexOf(err)) {
+            <mat-error>{{ err }}</mat-error>
+        }
+        {{form.errors}}
+        <button class="mat-primary" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid" type="button">Submit
+        </button>
+    </form>
+</div>

@@ -34,12 +34,12 @@ public class IncomeService : IIncomeService
 
         ValidateIncome(income, userId);
         
-        var updatedIncome = this._mapper.Map<Income>(updateIncomeDto);
-        updatedIncome.Id = id;
-        updatedIncome.UserId = userId;
-        updatedIncome.Date = income!.Date;
-        
-        this._unitOfWork.IncomeRepository.Update(updatedIncome);
+        income!.Date = updateIncomeDto.Date;
+        income.Amount = updateIncomeDto.Amount;
+        income.Description = updateIncomeDto.Description;
+        income.Title = updateIncomeDto.Title;
+
+        this._unitOfWork.IncomeRepository.Update(income);
         await this._unitOfWork.CommitAsync();
     }
 
@@ -53,7 +53,7 @@ public class IncomeService : IIncomeService
         await this._unitOfWork.CommitAsync();
     }
 
-    public async Task<IEnumerable<IncomeDto>> GetUserIncomesDto(string userId)
+    public async Task<IEnumerable<IncomeDto>> GetUserIncomesAsync(string userId)
     {
         return this._mapper.Map<IEnumerable<IncomeDto>>(await this._unitOfWork.IncomeRepository.FindUserIncomesAsync(userId));
     }

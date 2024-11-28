@@ -1,0 +1,57 @@
+<div class="overflow-y-hidden p-10">
+    <h2 class="mat-h2">{{isEditing ? "Edit goal": "Add goal"}}</h2>
+    <form class="flex flex-col gap-5 w-96" [formGroup]="form">
+        <mat-form-field>
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title">
+        </mat-form-field>
+        <div *ngIf="title.invalid && !title.untouched">
+            <mat-error *ngIf="title.hasError('required')">Title is required</mat-error>
+            <mat-error *ngIf="title.hasError('maxlength')">Title must be less than 100 characters long.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Current amount</mat-label>
+            <input matInput type="number" formControlName="currentAmount">
+        </mat-form-field>
+        <div *ngIf="currentAmount.invalid && !currentAmount.untouched">
+            <mat-error *ngIf="currentAmount.hasError('required')">Current amount is required and must be a valid number.</mat-error>
+            <mat-error *ngIf="currentAmount.hasError('min')">Current amount must be positive number.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Goal amount</mat-label>
+            <input matInput type="number" formControlName="goalAmount">
+        </mat-form-field>
+        <div *ngIf="goalAmount.invalid && !goalAmount.untouched">
+            <mat-error *ngIf="goalAmount.hasError('required')">Goal amount is required and must be a valid number.</mat-error>
+            <mat-error *ngIf="goalAmount.hasError('min')">Goal amount must be positive number.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+        <div *ngIf="description.invalid && !description.untouched">
+            <mat-error *ngIf="description.hasError('required')">Description is required.</mat-error>
+            <mat-error *ngIf="description.hasError('maxlength')">Description must be less than 100 characters long.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Deadline</mat-label>
+            <input matInput type="date" formControlName="deadline">
+        </mat-form-field>
+        <div *ngIf="deadline.invalid && !deadline.untouched">
+            <mat-error *ngIf="deadline.hasError('required')">Date and time are required.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Storage place(e.g. cash or card number)</mat-label>
+            <input matInput formControlName="storedIn">
+        </mat-form-field>
+        <div *ngIf="storedIn.invalid && !storedIn.untouched">
+            <mat-error *ngIf="storedIn.hasError('required')">Storage type is required.</mat-error>
+            <mat-error *ngIf="storedIn.hasError('maxlength')">Storage type must be less than 50 characters long.</mat-error>
+        </div>
+        @for (err of errorsFromBackend; track errorsFromBackend.indexOf(err)) {
+            <mat-error>{{ err }}</mat-error>
+        }
+        <button class="mat-primary" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid" type="button">Submit
+        </button>
+    </form>
+</div>

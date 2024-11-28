@@ -13,11 +13,11 @@ public class AddGoalDto
     public string Description { get; set; } = null!;
 
     [Required]
-    [Range(1, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal GoalAmount { get; set; }
 
     [Required]
-    [Range(1, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal CurrentAmount { get; set; }
    
     [Required]
