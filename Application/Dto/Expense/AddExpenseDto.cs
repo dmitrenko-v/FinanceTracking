@@ -13,7 +13,6 @@ public class AddExpenseDto
     public string Description { get; set; } = null!;
     
     [Required]
-    [MaxLength(30, ErrorMessage = "Category name must be less than 30 characters long.")]
     public string CategoryName { get; set; } = null!;
     
     [Required]

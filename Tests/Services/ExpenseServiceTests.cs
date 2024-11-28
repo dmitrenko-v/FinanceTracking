@@ -12,7 +12,7 @@ namespace Tests.Services;
 public class ExpenseServiceTests
 {
     [Test]
-    public async Task AddExpenseAsyncAddsValidExpense()
+    public async Task AddExpenseAsyncAddsValidExpenseForNotExistingBudget()
     {
         var newExpense = new AddExpenseDto
         {
@@ -32,6 +32,9 @@ public class ExpenseServiceTests
 
         mockUnitOfWork
             .Setup(x => x.ExpenseRepository.Add(It.IsAny<Expense>()));
+        
+        mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, newExpense.CategoryName))
+            .ReturnsAsync((Budget?)null);
 
         var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
         await expenseService.AddExpenseAsync(newExpense, userId);
@@ -71,7 +74,7 @@ public class ExpenseServiceTests
     }
 
     [Test]
-    public async Task UpdateExpenseAsyncUpdatesValidExpense()
+    public async Task UpdateExpenseAsyncUpdatesValidExpenseForNotExistingBudget()
     {
         var existingExpense = new Expense
         {
@@ -112,7 +115,6 @@ public class ExpenseServiceTests
                 x.UserId == userId &&
                 x.CategoryName == updatedExpense.CategoryName &&
                 x.Amount == updatedExpense.Amount &&
-                x.Date == existingExpense.Date &&
                 x.Description == updatedExpense.Description &&
                 x.Title == updatedExpense.Title)), Times.Once);
         mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
@@ -177,7 +179,7 @@ public class ExpenseServiceTests
     }
 
     [Test]
-    public async Task DeleteExpenseAsyncDeletesValidExpense()
+    public async Task DeleteExpenseAsyncDeletesValidExpenseForNotExistingBudget()
     {
         var existingExpense = new Expense
         {
@@ -198,6 +200,9 @@ public class ExpenseServiceTests
             .ReturnsAsync(existingExpense);
 
         mockUnitOfWork.Setup(x => x.ExpenseRepository.Delete(existingExpense));
+        
+        mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, existingExpense.CategoryName))
+            .ReturnsAsync((Budget?)null);
 
         var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
         await expenseService.DeleteExpenseAsync(existingExpense.Id, userId);

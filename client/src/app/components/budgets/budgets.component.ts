@@ -12,7 +12,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   selector: "app-budgets",
   standalone: true,
   imports: [
-    DatePipe,
     MatButtonModule,
     MatCardModule,
     MatProgressBarModule,

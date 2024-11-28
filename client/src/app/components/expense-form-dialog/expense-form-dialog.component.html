@@ -1,0 +1,54 @@
+<div class="overflow-y-hidden p-10">
+    <h2 class="mat-h2">{{ isEditing ? "Edit expense" : "Add expense" }}</h2>
+    <form class="flex flex-col gap-5 w-96" [formGroup]="form">
+        <mat-form-field>
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title">
+        </mat-form-field>
+        <div *ngIf="title.invalid && !title.untouched">
+            <mat-error *ngIf="title.hasError('required')">Title is required</mat-error>
+            <mat-error *ngIf="title.hasError('maxlength')">Title must be less than 100 characters long.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount">
+        </mat-form-field>
+        <div *ngIf="amount.invalid && !amount.untouched">
+            <mat-error *ngIf="amount.hasError('required')">Amount is required and must be a valid number.</mat-error>
+            <mat-error *ngIf="amount.hasError('min')">Amount must be positive number.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Category name</mat-label>
+            <mat-select formControlName="categoryName">
+                @for (category of categories; track category) {
+                    <mat-option value="{{category}}">{{ category }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <div *ngIf="categoryName.invalid && !categoryName.untouched">
+            <mat-error *ngIf="categoryName.hasError('required')">Category name is required.</mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+        <div *ngIf="description.invalid && !description.untouched">
+            <mat-error *ngIf="description.hasError('required')">Description is required.</mat-error>
+            <mat-error *ngIf="description.hasError('maxlength')">Description must be less than 200 characters long.
+            </mat-error>
+        </div>
+        <mat-form-field>
+            <mat-label>Date and time</mat-label>
+            <input matInput type="datetime-local" formControlName="date">
+        </mat-form-field>
+        <div *ngIf="date.invalid && !date.untouched">
+            <mat-error *ngIf="date.hasError('required')">Date and time are required.</mat-error>
+            <mat-error *ngIf="date.hasError('invalidDate')">Please, enter valid date.</mat-error>
+        </div>
+        @for (err of errorsFromBackend; track errorsFromBackend.indexOf(err)) {
+            <mat-error>{{ err }}</mat-error>
+        }
+        <button class="mat-primary" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid" type="button">Submit
+        </button>
+    </form>
+</div>

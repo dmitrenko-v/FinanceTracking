@@ -34,7 +34,11 @@ public class BudgetService : IBudgetService
         }
         
         budget.UserId = userId;
+        // var userExpenses = await this._unitOfWork.ExpenseRepository.FindUserExpensesAsync(userId);
         budget.CurrentAmount = 0;
+            // userExpenses
+            // .Where(x => x.Date.Month == DateTime.Now.Month && x.Date.Year == DateTime.Now.Year)
+            // .Sum(x => x.Amount);
         
         this._unitOfWork.BudgetRepository.Add(budget);
         await this._unitOfWork.CommitAsync();

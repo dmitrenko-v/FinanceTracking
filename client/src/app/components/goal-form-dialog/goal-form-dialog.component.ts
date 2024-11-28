@@ -30,8 +30,11 @@ export class GoalFormDialogComponent {
   private readonly data: GoalDto | null = inject<GoalDto | null>(
     MAT_DIALOG_DATA,
   );
+  
   isEditing: boolean = false;
+  
   fb = inject(FormBuilder);
+  
   form = this.fb.nonNullable.group({
     title: ["", [Validators.required, Validators.maxLength(100)]],
     description: ["", [Validators.required, Validators.maxLength(100)]],
@@ -40,6 +43,7 @@ export class GoalFormDialogComponent {
     currentAmount: [0, [Validators.required, Validators.min(0)]],
     storedIn: ["", [Validators.required, Validators.maxLength(50)]],
   });
+  
   errorsFromBackend: string[] = [];
 
   constructor(

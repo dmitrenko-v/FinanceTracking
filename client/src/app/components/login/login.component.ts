@@ -23,10 +23,12 @@ import { handleError } from "../../../utils";
 })
 export class LoginComponent {
   fb = inject(FormBuilder);
+  
   form = this.fb.nonNullable.group({
     email: ["", [Validators.required, Validators.email]],
     password: ["", Validators.required],
   });
+  
   errorsFromBackend: string[] = [];
 
   constructor(

@@ -13,7 +13,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 })
 export class NavbarComponent {
   user: UserData | undefined;
-
+  
   constructor(private authService: AuthService) {
     this.authService.user.subscribe((user) => (this.user = user));
   }

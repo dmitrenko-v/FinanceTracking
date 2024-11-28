@@ -9,6 +9,9 @@
                 }
             </mat-select>
         </mat-form-field>
+        <div *ngIf="categoryName && categoryName.invalid && !categoryName.untouched">
+            <mat-error *ngIf="categoryName.hasError('required')">Category name is required.</mat-error>
+        </div>
         <mat-form-field>
             <mat-label>Ceiling amount</mat-label>
             <input matInput type="number" formControlName="ceilingAmount">

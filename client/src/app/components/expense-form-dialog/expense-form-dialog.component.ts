@@ -1,48 +1,64 @@
 import { Component, inject } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  FormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { dateValidator } from "../../customValidators";
+import { IncomeService } from "../../services/income.service";
+import { handleError } from "../../../utils";
+import { ExpenseDto } from "../../dtos/expense/expenseDto";
+import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
 import { NgIf } from "@angular/common";
-import { IncomeService } from "../../services/income.service";
-import { dateValidator } from "../../customValidators";
-import { IncomeDto } from "../../dtos/income/incomeDto";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { handleError } from "../../../utils";
+import { MatOptionModule } from "@angular/material/core";
+import { MatSelectModule } from "@angular/material/select";
+import { CategoryService } from "../../services/category.service";
+import { ExpenseService } from "../../services/expense.service";
 
 @Component({
-  selector: "app-income-form-dialog",
+  selector: "app-expense-form-dialog",
   standalone: true,
   imports: [
+    FormsModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
-    MatButtonModule,
     NgIf,
+    ReactiveFormsModule,
+    MatOptionModule,
+    MatSelectModule,
   ],
-  templateUrl: "./income-form-dialog.component.html",
+  templateUrl: "./expense-form-dialog.component.html",
 })
-export class IncomeFormDialogComponent {
-  private readonly data: IncomeDto | null = inject<IncomeDto | null>(
+export class ExpenseFormDialogComponent {
+  private readonly data: ExpenseDto | null = inject<ExpenseDto | null>(
     MAT_DIALOG_DATA,
   );
-  
+
   isEditing: boolean = false;
-  
+
   fb = inject(FormBuilder);
-  
+
   form = this.fb.nonNullable.group({
     title: ["", [Validators.required, Validators.maxLength(100)]],
     description: ["", [Validators.required, Validators.maxLength(200)]],
+    categoryName: ["", [Validators.required]],
     date: ["", [Validators.required, dateValidator()]],
     amount: [0, [Validators.required, Validators.min(0)]],
   });
-  
+
+  categories: string[] = [];
+
   errorsFromBackend: string[] = [];
 
   constructor(
-    private incomeService: IncomeService,
-    private dialogRef: MatDialogRef<IncomeFormDialogComponent>,
+    private expenseService: ExpenseService,
+    private categoryService: CategoryService,
+    private dialogRef: MatDialogRef<ExpenseFormDialogComponent>,
   ) {
     if (this.data) {
       this.isEditing = true;
@@ -51,6 +67,9 @@ export class IncomeFormDialogComponent {
         date: new Date(this.data.date).toLocaleString("sv").replace(" ", "T"),
       });
     }
+    this.categoryService
+      .getCategories()
+      .subscribe((categories) => (this.categories = categories));
   }
 
   get title() {
@@ -69,17 +88,21 @@ export class IncomeFormDialogComponent {
     return this.form.controls["amount"];
   }
 
+  get categoryName() {
+    return this.form.controls["categoryName"];
+  }
+
   onSubmit() {
     const dto = { ...this.form.getRawValue(), date: new Date(this.date.value) };
     if (this.isEditing) {
-      this.incomeService.editIncome(this.data!.id, dto).subscribe({
+      this.expenseService.editExpense(this.data!.id, dto).subscribe({
         next: () => {
           this.dialogRef.close();
         },
         error: (error) => handleError(error, this.errorsFromBackend),
       });
     } else {
-      this.incomeService.addIncome(dto).subscribe({
+      this.expenseService.addExpense(dto).subscribe({
         next: () => {
           this.dialogRef.close();
         },

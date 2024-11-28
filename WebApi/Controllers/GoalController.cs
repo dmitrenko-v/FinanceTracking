@@ -17,7 +17,7 @@ public class GoalController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GoalDto>>> GetGoalsAsync()
+    public async Task<ActionResult<IEnumerable<GoalDto>>> GetGoals()
     {
         var userId = this.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
         return this.Ok(await this._goalService.GetUserGoalsAsync(userId!));
