@@ -28,11 +28,11 @@ public class ExpenseServiceTests
 
         mockUnitOfWork
             .Setup(x => x.CategoryRepository.FindByNameAsync(newExpense.CategoryName))
-            .ReturnsAsync(new Category());
+            .ReturnsAsync(new Category { Name = newExpense.CategoryName });
 
         mockUnitOfWork
             .Setup(x => x.ExpenseRepository.Add(It.IsAny<Expense>()));
-        
+
         mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, newExpense.CategoryName))
             .ReturnsAsync((Budget?)null);
 
@@ -47,6 +47,100 @@ public class ExpenseServiceTests
                 x.Date == newExpense.Date &&
                 x.Description == newExpense.Description &&
                 x.Title == newExpense.Title)), Times.Once);
+        mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
+    }
+
+    [Test]
+    public async Task AddExpenseAsyncAddsAmountForExistingBudgetAndCurrMonth()
+    {
+        var newExpense = new AddExpenseDto
+        {
+            Amount = 100,
+            CategoryName = "Category",
+            Date = DateTime.Now,
+            Description = "New expense",
+            Title = "Expense title"
+        };
+        var userId = "user1";
+
+        var budget = new Budget
+        {
+            UserId = userId,
+            CategoryName = newExpense.CategoryName,
+            CurrentAmount = 1000,
+            CeilingAmount = 2000,
+        };
+
+        var mapper = MapperHelper.CreateMapper();
+        var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+        mockUnitOfWork
+            .Setup(x => x.CategoryRepository.FindByNameAsync(newExpense.CategoryName))
+            .ReturnsAsync(new Category { Name = newExpense.CategoryName });
+
+        mockUnitOfWork
+            .Setup(x => x.ExpenseRepository.Add(It.IsAny<Expense>()));
+
+        mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, newExpense.CategoryName))
+            .ReturnsAsync(budget);
+
+        mockUnitOfWork.Setup(x => x.BudgetRepository.Update(It.IsAny<Budget>()));
+
+        var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
+        await expenseService.AddExpenseAsync(newExpense, userId);
+
+        mockUnitOfWork.Verify(uow =>
+            uow.BudgetRepository.Update(It.Is<Budget>(x =>
+                x.UserId == userId &&
+                x.CategoryName == newExpense.CategoryName &&
+                x.CurrentAmount == 1100)), Times.Once);
+        mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
+    }
+
+    [Test]
+    public async Task AddExpenseAsyncDoesntAddsAmountForExistingBudgetAndNotCurrMonth()
+    {
+        var newExpense = new AddExpenseDto
+        {
+            Amount = 100,
+            CategoryName = "Category",
+            Date = new DateTime(2000, 1, 1),
+            Description = "New expense",
+            Title = "Expense title"
+        };
+        var userId = "user1";
+
+        var budget = new Budget
+        {
+            UserId = userId,
+            CategoryName = newExpense.CategoryName,
+            CurrentAmount = 1000,
+            CeilingAmount = 2000,
+        };
+
+        var mapper = MapperHelper.CreateMapper();
+        var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+        mockUnitOfWork
+            .Setup(x => x.CategoryRepository.FindByNameAsync(newExpense.CategoryName))
+            .ReturnsAsync(new Category { Name = newExpense.CategoryName });
+
+        mockUnitOfWork
+            .Setup(x => x.ExpenseRepository.Add(It.IsAny<Expense>()));
+
+        mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, newExpense.CategoryName))
+            .ReturnsAsync(budget);
+
+        mockUnitOfWork.Setup(x => x.BudgetRepository.Update(It.IsAny<Budget>()));
+
+        var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
+        await expenseService.AddExpenseAsync(newExpense, userId);
+
+        mockUnitOfWork.Verify(uow =>
+            uow.BudgetRepository.Update(It.Is<Budget>(x =>
+                x.UserId == userId &&
+                x.CategoryName == newExpense.CategoryName &&
+                x.CurrentAmount == 1100)), Times.Never);
         mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
     }
 
@@ -72,6 +166,7 @@ public class ExpenseServiceTests
         var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
         Assert.ThrowsAsync<BadRequestException>(async () => await expenseService.AddExpenseAsync(newExpense, userId));
     }
+
 
     [Test]
     public async Task UpdateExpenseAsyncUpdatesValidExpenseForNotExistingBudget()
@@ -119,7 +214,7 @@ public class ExpenseServiceTests
                 x.Title == updatedExpense.Title)), Times.Once);
         mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
     }
-    
+
     [Test]
     public void UpdateExpenseAsyncThrowsForNullExpense()
     {
@@ -200,7 +295,7 @@ public class ExpenseServiceTests
             .ReturnsAsync(existingExpense);
 
         mockUnitOfWork.Setup(x => x.ExpenseRepository.Delete(existingExpense));
-        
+
         mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, existingExpense.CategoryName))
             .ReturnsAsync((Budget?)null);
 
@@ -216,6 +311,55 @@ public class ExpenseServiceTests
                 x.Date == existingExpense.Date &&
                 x.Description == existingExpense.Description &&
                 x.Title == existingExpense.Title)), Times.Once);
+        mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteExpenseAsyncSubtractsFromBudgetForValidExpenseAndExistingBudget()
+    {
+        var existingExpense = new Expense
+        {
+            Id = 1,
+            UserId = "user1",
+            CategoryName = "Category",
+            Amount = 100,
+            Description = "New expense",
+            Title = "Expense title",
+            Date = DateTime.Now,
+        };
+        var userId = "user1";
+        
+        var budget = new Budget
+        {
+            UserId = userId,
+            CategoryName = existingExpense.CategoryName,
+            CurrentAmount = 1000,
+            CeilingAmount = 2000,
+        };
+
+        
+        var mapper = MapperHelper.CreateMapper();
+        var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+        mockUnitOfWork
+            .Setup(x => x.ExpenseRepository.FindByIdAsync(existingExpense.Id))
+            .ReturnsAsync(existingExpense);
+
+        mockUnitOfWork.Setup(x => x.ExpenseRepository.Delete(existingExpense));
+
+        mockUnitOfWork.Setup(x => x.BudgetRepository.FindByUserIdAndCategoryName(userId, existingExpense.CategoryName))
+            .ReturnsAsync(budget);
+        
+        mockUnitOfWork.Setup(x => x.BudgetRepository.Update(budget));
+
+        var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
+        await expenseService.DeleteExpenseAsync(existingExpense.Id, userId);
+
+        mockUnitOfWork.Verify(uow =>
+            uow.BudgetRepository.Update(It.Is<Budget>(x =>
+                x.UserId == userId &&
+                x.CategoryName == existingExpense.CategoryName &&
+                x.CurrentAmount == 900)), Times.Once);
         mockUnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);
     }
 
@@ -311,7 +455,7 @@ public class ExpenseServiceTests
         mockUnitOfWork
             .Setup(x => x.ExpenseRepository.FindUserExpensesAsync(userId))
             .ReturnsAsync(new List<Expense> { existingExpenses[0] });
-        
+
         var expenseService = new ExpenseService(mockUnitOfWork.Object, mapper);
         var result = (await expenseService.GetUserExpensesAsync(userId)).ToList();
 

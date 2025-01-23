@@ -32,11 +32,13 @@ public class ExpenseService : IExpenseService
 
         var userBudget =
             await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, expense.CategoryName);
+        
         if (userBudget is not null &&
             DateTime.Now.Month == addExpenseDto.Date.Month &&
             DateTime.Now.Year == addExpenseDto.Date.Year)
         {
             userBudget.CurrentAmount += expense.Amount;
+            Console.WriteLine(userBudget.CurrentAmount);
             this._unitOfWork.BudgetRepository.Update(userBudget);
         }
 
@@ -53,43 +55,7 @@ public class ExpenseService : IExpenseService
                         DateTime.Now.Year == updateExpenseDto.Date.Year;
 
         ValidateExpense(expense, userId);
-
-        var updatedExpense = this._mapper.Map<Expense>(updateExpenseDto);
-        updatedExpense.Id = id;
-        updatedExpense.UserId = userId;
-
-        var userBudget =
-            await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, updateExpenseDto.CategoryName);
-        if (!currMonth && userBudget is not null && updateExpenseDto.CategoryName == expense!.CategoryName && userBudget.CurrentAmount > 0)
-        {
-            userBudget.CurrentAmount -= updatedExpense.Amount;
-        }
-        else if (currMonth && userBudget is not null && updateExpenseDto.CategoryName == expense!.CategoryName)
-        {
-            var diff = userBudget.CurrentAmount == 0 ? updatedExpense.Amount: updateExpenseDto.Amount - expense.Amount;
-            userBudget.CurrentAmount += diff;
-        }
-        else if (updateExpenseDto.CategoryName != expense!.CategoryName)
-        {
-            var oldCategoryUserBudget =
-                await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, expense.CategoryName);
-            if (oldCategoryUserBudget is not null && oldCategoryUserBudget.CurrentAmount > 0)
-            {
-                oldCategoryUserBudget.CurrentAmount -= updatedExpense.Amount;
-                this._unitOfWork.BudgetRepository.Update(oldCategoryUserBudget);
-            }
-            if (userBudget is not null && currMonth)
-            {
-                userBudget.CurrentAmount += updateExpenseDto.Amount;
-            }
-        }
-
-        if (userBudget is not null)
-        {
-            this._unitOfWork.BudgetRepository.Update(userBudget);
-        }
         
-        this._unitOfWork.ExpenseRepository.Update(updatedExpense);
         await this._unitOfWork.CommitAsync();
     }
 
@@ -101,6 +67,7 @@ public class ExpenseService : IExpenseService
 
         var userBudget =
             await this._unitOfWork.BudgetRepository.FindByUserIdAndCategoryName(userId, expense!.CategoryName);
+        
         if (userBudget is not null)
         {
             userBudget.CurrentAmount -= expense.Amount;
